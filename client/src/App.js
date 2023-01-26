@@ -1,36 +1,36 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
-import Navbar from './components/Navbar';
-import { ApolloProvider } from '@apollo/react-hooks';
-import ApolloClient from 'apollo-boost';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
 
 const client = new ApolloClient({
-    request: operation => {
-        const token = localStorage.getItem('id_token');
-
-        operation.setContext({
-            headers: {
-                authorization: token ? `Bearer ${token}` : ''
-            }
-        })
-    },
-    uri: '/graphql'
+    uri: '/graphql',
+    cache: new InMemoryCache(),
 });
 
 function App() {
     return (
         <ApolloProvider client={client}>
             <Router>
-                <>
-                <Navbar />
-                <Switch>
-                    <Route exact path='/' components={SearchBooks} />
-                    <Route exact path='/saved' components={SavedBooks} />
-                    <Route render={() => <h1 className='display-2'>Wrong Page</h1>} />
-                    </Switch>
-                    </>
+                <div className="flex-column justify-center align-center min-100-vh bg-primary">
+                <Routes>
+                    <Route  path='/' 
+                    elements={<Home/>} 
+                    />
+                    <Route  path='/saved' 
+                    elements={<SavedBooks/>} 
+                    />
+                    <Route  path='/search' 
+                    elements={<SearchBooks/>} 
+                    />
+                    <Route path="*"
+                    elements={<NotFound/>} />
+                    </Routes>
+                    </div>
             </Router>
         </ApolloProvider>
 
